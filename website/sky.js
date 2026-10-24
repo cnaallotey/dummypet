@@ -21,6 +21,7 @@
     uniform vec2 uMouse;
     uniform float uShoot;
     uniform float uHills;
+    uniform float uSun;
 
     float hash(vec2 p) { p = fract(p * vec2(123.34, 456.21)); p += dot(p, p + 45.32); return fract(p.x * p.y); }
     float noise(vec2 p) {
@@ -65,12 +66,12 @@
       float portrait = 1.0 - smoothstep(0.9, 1.2, aspect);
       vec2 sp = vec2(mix(0.74, 0.9, d) * aspect, mix(0.8, 0.22, smoothstep(0.3, 0.85, d)));
       float sd = length(q - sp);
-      float sunVis = (1.0 - smoothstep(0.8, 0.9, d)) * (1.0 - portrait);
+      float sunVis = (1.0 - smoothstep(0.8, 0.9, d)) * (1.0 - portrait) * uSun;
       vec3 sunCol = mix(vec3(1.0, 0.96, 0.82), vec3(1.0, 0.62, 0.36), smoothstep(0.4, 0.8, d));
       col += sunCol * (smoothstep(0.058, 0.052, sd) * 0.9 + 0.32 * exp(-sd * 6.0)) * sunVis;
 
       // Moon (crescent) and night glow.
-      float moonVis = smoothstep(0.8, 0.95, d) * (1.0 - portrait);
+      float moonVis = smoothstep(0.8, 0.95, d) * (1.0 - portrait) * uSun;
       vec2 mp = vec2(0.8 * aspect, 0.8);
       float md = length(q - mp);
       float disc = smoothstep(0.046, 0.041, md);
@@ -163,6 +164,7 @@
       this.scroll = 0;
       this.shoot = opts.shoot ? 1 : 0;
       this.hills = opts.hills === false ? 0 : 1;
+      this.sun = opts.sun === false ? 0 : 1;
       this.groundFn = typeof opts.ground === "function" ? opts.ground : () => opts.ground ?? 100;
       this.time = Math.random() * 100;
       this.mouse = [0, 0];
@@ -197,7 +199,7 @@
       gl.enableVertexAttribArray(loc);
       gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
       this.u = {};
-      for (const n of ["uRes", "uTime", "uDay", "uScroll", "uGround", "uDpr", "uMouse", "uShoot", "uHills"]) this.u[n] = gl.getUniformLocation(prog, n);
+      for (const n of ["uRes", "uTime", "uDay", "uScroll", "uGround", "uDpr", "uMouse", "uShoot", "uHills", "uSun"]) this.u[n] = gl.getUniformLocation(prog, n);
       this.gl = gl;
       this.canvas.addEventListener("webglcontextlost", (e) => { e.preventDefault(); skies.delete(this); this.canvas.classList.add("no-gl"); });
       return true;
@@ -238,6 +240,7 @@
       gl.uniform2f(u.uMouse, this.mouse[0], this.mouse[1]);
       gl.uniform1f(u.uShoot, this.shoot);
       gl.uniform1f(u.uHills, this.hills);
+      gl.uniform1f(u.uSun, this.sun);
       gl.drawArrays(gl.TRIANGLES, 0, 3);
       this.dirty = false;
     }

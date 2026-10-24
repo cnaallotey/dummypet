@@ -67,6 +67,18 @@ Hover over the dog to see its Food / Fun / Energy / Clean meters. Stats save aut
 drift slowly while the app is closed (gently: it never gets hurt). Change breed, size, and name
 under **Appearance**.
 
+## Social and press images
+
+```bash
+./press/render.sh            # OG image, square post, Product Hunt gallery (headless Chrome, a few minutes)
+./press/render-thumbnail.sh  # animated 240×240 Product Hunt thumbnail
+```
+
+The cards are plain HTML in `press/cards.html` using the site's fonts, WebGL sky, and dog renderer.
+Output lands in `website/assets/` (OG and square images) and `press/producthunt/`, which also holds
+`LAUNCH.md` with the listing copy and maker comment. SEO tags, `robots.txt`, `sitemap.xml`, and the
+JSON-LD in `index.html` use the workers.dev URL; update them if you add a custom domain.
+
 ## Code map
 
 - `Sources/World.swift`: the brain (behavior state machine, physics, stats, input, drawing order)

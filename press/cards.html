@@ -1,0 +1,217 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>DummyPet press cards</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Geist:wght@400;500;600;700&display=block" rel="stylesheet">
+<script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
+<style>
+  /* Rendered by press/render.sh with headless Chrome at each card's exact pixel size. */
+  :root {
+    --ink: #12141a; --muted: #4a5163; --accent: #cfee3d; --accent-ink: #151a05;
+    --display: "Bricolage Grotesque", "Geist", system-ui, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: #0f1116; }
+  body { font-family: "Geist", system-ui, sans-serif; color: var(--ink); -webkit-font-smoothing: antialiased; }
+  .card { position: relative; overflow: hidden; background: linear-gradient(180deg, #a9d2ff, #f1f7ff); }
+  .layer { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+  .copy { position: absolute; z-index: 3; }
+  h1, h2 { margin: 0; font-family: var(--display); font-weight: 800; letter-spacing: -0.025em; line-height: 1.02; }
+  p { margin: 0; }
+  .brand { display: flex; align-items: center; gap: 14px; font: 800 30px/1 var(--display); letter-spacing: -0.02em; }
+  .brand img { width: 52px; height: 52px; border-radius: 12px; }
+  .pill {
+    display: inline-flex; align-items: center; gap: 10px; padding: 14px 24px; border-radius: 999px;
+    background: var(--accent); color: var(--accent-ink); font: 700 22px/1 "Geist", sans-serif;
+    box-shadow: inset 0 -2px 0 rgba(0, 0, 0, 0.08), 0 8px 24px -10px rgba(40, 60, 10, 0.5);
+  }
+  .url { font: 600 20px/1 "Geist", sans-serif; color: var(--muted); }
+  .sub { font-size: 26px; line-height: 1.4; color: var(--muted); }
+  .panel { position: absolute; overflow: hidden; border-radius: 22px; box-shadow: 0 18px 40px -18px rgba(20, 30, 60, 0.45); }
+  .clock {
+    position: absolute; z-index: 3; left: 18px; top: 16px; padding: 8px 14px; border-radius: 999px;
+    background: rgba(255, 255, 255, 0.88); font: 700 17px/1 "Geist", sans-serif; color: var(--ink);
+  }
+  .tricks { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .trick {
+    display: grid; grid-template-columns: auto 1fr; align-items: center; gap: 12px;
+    padding: 16px 22px; border-radius: 999px; background: rgba(255, 255, 255, 0.92);
+    font: 700 21px/1.1 "Geist", sans-serif; box-shadow: 0 6px 18px -10px rgba(20, 30, 60, 0.4);
+  }
+  .trick span { font-size: 24px; }
+  .trick.on { background: var(--accent); color: var(--accent-ink); }
+  .names { position: absolute; left: 0; right: 0; display: grid; text-align: center; font: 700 18px/1.2 "Geist", sans-serif; color: #fff; text-shadow: 0 1px 6px rgba(0, 0, 0, 0.35); }
+  .facts { display: grid; gap: 22px; margin-top: 40px; }
+  .fact { display: grid; grid-template-columns: 56px 1fr; gap: 18px; align-items: center; font: 600 25px/1.3 "Geist", sans-serif; }
+  .fact i { width: 56px; height: 56px; border-radius: 16px; display: grid; place-items: center; background: #eaeef5; font-size: 28px; color: var(--ink); }
+  .fact small { display: block; font-weight: 500; font-size: 19px; color: var(--muted); }
+</style>
+</head>
+<body>
+<div id="card" class="card"></div>
+<script src="../website/sky.js"></script>
+<script src="../website/dog.js"></script>
+<script>
+(() => {
+  const { Stage } = window.DummyPet;
+  const { Sky } = window.DummySky;
+  const card = document.getElementById("card");
+
+  function canvas(parent, rect) {
+    const c = document.createElement("canvas");
+    c.className = "layer";
+    if (rect) Object.assign(c.style, { inset: "auto", left: rect[0] + "px", top: rect[1] + "px", width: rect[2] + "px", height: rect[3] + "px" });
+    parent.appendChild(c);
+    return c;
+  }
+  const sky = (parent, o) => new Sky(canvas(parent, o.rect), { day: o.day ?? 0.08, ground: o.ground, shoot: false, hills: o.hills !== false, sun: o.sun !== false });
+  function dog(parent, o) {
+    const st = new Stage(canvas(parent, o.rect), Object.assign({ mode: "still", grass: false, interactive: false, bubbleScale: 1.7 }, o));
+    if (o.ball) {
+      const r = 9 * st.s;
+      const pos = o.ball === "mouth" ? [st.mouth[0] + 13 * st.s, st.mouth[1] + 5 * st.s] : [st.w * o.ball[0], o.ball[1] === "ground" ? st.gy + r : o.ball[1]];
+      st.items.push({ x: pos[0], y: pos[1], vx: 0, vy: 0, r, spin: 0.6, carried: false, thrown: false });
+    }
+    if (o.say) st.say(o.say, 1e6);
+    if (o.happy) st.dog.happyTimer = 1e6;
+    return st;
+  }
+  function html(parent, markup, style) {
+    const d = document.createElement("div");
+    d.className = "copy";
+    Object.assign(d.style, style);
+    d.innerHTML = markup;
+    parent.appendChild(d);
+    return d;
+  }
+  const brand = `<div class="brand"><img src="../website/assets/icon.png" alt="">DummyPet</div>`;
+
+  const CARDS = {
+    // Open Graph / Twitter: 1200x630
+    og: { w: 1200, h: 630, build(el) {
+      sky(el, { day: 0.08, ground: 112 });
+      dog(el, { pose: "sit", s: 2.75, ground: 112, x: 0.77, ball: [0.9, "ground"], say: "Woof! 🐾", flowers: true, override: { tongue: 1, mouth: 0.35 } });
+      html(el, `${brand}
+        <h1 style="font-size:74px;margin-top:40px">A very good dog<br>for your Mac.</h1>
+        <div style="display:flex;align-items:center;gap:20px;margin-top:34px">
+          <span class="pill"><i class="ph-bold ph-apple-logo"></i> Free for macOS</span>
+        </div>`, { left: "64px", top: "56px" });
+    } },
+
+    // Square social post: 1080x1080
+    square: { w: 1080, h: 1080, build(el) {
+      sky(el, { day: 0.62, ground: 230 });
+      dog(el, { pose: "playBow", s: 3.6, ground: 230, x: 0.5, ball: [0.8, "ground"], flowers: true, happy: true, override: { tongue: 1, mouth: 0.4 } });
+      html(el, `<div style="display:flex;justify-content:center">${brand}</div>
+        <h1 style="font-size:96px;margin-top:40px">Your Mac needs<br>a dog.</h1>
+        <div style="margin-top:34px"><span class="pill"><i class="ph-bold ph-apple-logo"></i> Free download for macOS</span></div>`,
+        { left: 0, right: 0, top: "86px", textAlign: "center", color: "#12141a" });
+    } },
+
+    // Product Hunt gallery: 1270x760
+    "ph-1-hero": { w: 1270, h: 760, build(el) {
+      sky(el, { day: 0.08, ground: 140 });
+      dog(el, { pose: "sit", s: 3.1, ground: 140, x: 0.75, ball: [0.9, "ground"], say: "Hi! Throw my ball? 🎾", flowers: true, override: { tongue: 1, mouth: 0.35 } });
+      html(el, `${brand}
+        <h1 style="font-size:84px;margin-top:44px;max-width:9.5ch">A very good dog that lives on your Mac.</h1>
+        <p class="sub" style="margin-top:26px;max-width:30ch">It naps on your Dock, begs for treats, and chases the ball you throw.</p>`,
+        { left: "72px", top: "70px" });
+    } },
+
+    "ph-2-fetch": { w: 1270, h: 760, build(el) {
+      sky(el, { day: 0.36, ground: 130 });
+      const st = dog(el, { pose: "jump", s: 3.0, ground: 130, x: 0.63, y: 150, ball: "mouth", say: "Got it! 😎", override: { mouth: 0.75, earLift: 0.7 } });
+      // Dotted throw arc ending at the ball.
+      const t = canvas(el);
+      t.width = 1270; t.height = 760;
+      const g = t.getContext("2d");
+      const b = st.items[0];
+      const end = [b.x, 760 - b.y];
+      const start = [1240, 300], ctrl = [1080, 40];
+      for (let i = 0; i < 16; i++) {
+        const u = i / 16, v = 1 - u;
+        const x = v * v * start[0] + 2 * v * u * ctrl[0] + u * u * end[0];
+        const y = v * v * start[1] + 2 * v * u * ctrl[1] + u * u * end[1];
+        g.beginPath(); g.arc(x, y, 3 + u * 3, 0, Math.PI * 2);
+        g.fillStyle = `rgba(255,255,255,${0.25 + u * 0.6})`; g.fill();
+      }
+      html(el, `<h1 style="font-size:80px;max-width:8ch">Fetch with a flick.</h1>
+        <p class="sub" style="margin-top:24px;max-width:21ch">The ball sticks to your cursor. Flick and click to throw. It always brings it back.</p>`,
+        { left: "72px", top: "90px" });
+    } },
+
+    "ph-3-day": { w: 1270, h: 760, build(el) {
+      el.style.background = "#f3f5f9";
+      html(el, `<h1 style="font-size:66px">A whole day, morning to night.</h1>`, { left: "64px", top: "56px" });
+      const panels = [
+        { clock: "7:00 am", day: 0.02, pose: "playBow", o: { mouth: 0.9, eyeOpen: 0.3 } },
+        { clock: "11:30 am", day: 0.36, pose: "sit", o: { tongue: 1, mouth: 0.35 }, ball: [0.78, "ground"] },
+        { clock: "6:30 pm", day: 0.76, pose: "wet", foam: 1 },
+        { clock: "10:00 pm", day: 1, pose: "sleep", say: "Zzz" },
+      ];
+      const W = 268, gap = 20, top = 196, H = 500;
+      panels.forEach((p, i) => {
+        const panel = document.createElement("div");
+        panel.className = "panel";
+        Object.assign(panel.style, { left: 64 + i * (W + gap) + "px", top: top + "px", width: W + "px", height: H + "px" });
+        el.appendChild(panel);
+        sky(panel, { day: p.day, ground: 96 });
+        dog(panel, { pose: p.pose, s: 1.9, ground: 96, x: 0.5, foam: p.foam, ball: p.ball, say: p.say, override: p.o });
+        html(panel, `<span class="clock">${p.clock}</span>`, { inset: 0 });
+      });
+    } },
+
+    "ph-4-tricks": { w: 1270, h: 760, build(el) {
+      sky(el, { day: 0.5, ground: 120, sun: false });
+      dog(el, { pose: "beg", s: 3.2, ground: 120, rect: [0, 0, 560, 760], x: 0.52, say: "Treat? 🥺", override: { tongue: 0.7, mouth: 0.3 } });
+      const tricks = [["🪑", "Sit"], ["🗣️", "Speak"], ["🥺", "Beg"], ["🌀", "Spin"], ["✋", "High five"], ["🔄", "Roll over"], ["💫", "Play dead"], ["🤸", "Backflip"]];
+      html(el, `<h1 style="font-size:76px;max-width:9ch">Eight tricks to unlock.</h1>
+        <p class="sub" style="margin-top:20px;max-width:24ch">Every pat, walk and game of fetch builds your bond.</p>
+        <div class="tricks" style="margin-top:36px;width:560px">${tricks.map((t, i) => `<div class="trick${i === 2 ? " on" : ""}"><span>${t[0]}</span>${t[1]}</div>`).join("")}</div>`,
+        { left: "600px", top: "80px" });
+    } },
+
+    "ph-5-breeds": { w: 1270, h: 760, build(el) {
+      sky(el, { day: 0.7, ground: 150 });
+      const n = 7, cw = 1270 / n;
+      const names = ["Golden", "Chocolate", "Dalmatian", "Husky", "Shiba", "Midnight", "Samoyed"];
+      for (let i = 0; i < n; i++) {
+        dog(el, { pose: "sit", coat: i, s: 1.6, ground: 150, rect: [i * cw, 0, cw, 760], x: 0.52, override: i % 2 ? { tongue: 1, mouth: 0.35 } : { happyEyes: 1 } });
+      }
+      html(el, `<h1 style="font-size:80px;color:#fff;text-shadow:0 2px 14px rgba(40,20,60,.35)">Seven breeds. Any name.</h1>`, { left: 0, right: 0, top: "90px", textAlign: "center" });
+      html(el, `<div class="names" style="grid-template-columns:repeat(7,1fr);bottom:60px">${names.map((x) => `<span>${x}</span>`).join("")}</div>`, { left: 0, right: 0, bottom: 0 });
+    } },
+
+    "ph-6-free": { w: 1270, h: 760, build(el) {
+      el.style.background = "#f3f5f9";
+      const scene = document.createElement("div");
+      scene.className = "panel";
+      Object.assign(scene.style, { right: "56px", top: "56px", width: "520px", height: "648px" });
+      el.appendChild(scene);
+      sky(scene, { day: 0.95, ground: 120 });
+      dog(scene, { pose: "lie", s: 2.4, ground: 120, x: 0.5, say: "Ready when you are 💕", override: { happyEyes: 1, tongue: 0.6 } });
+      html(scene, `<img src="../website/assets/icon.png" alt="" style="width:150px;height:150px;display:block;margin:0 auto">`, { left: 0, right: 0, top: "86px" });
+      html(el, `${brand}
+        <h1 style="font-size:72px;margin-top:34px">Free. Private. Tiny.</h1>
+        <div class="facts">
+          <div class="fact"><i class="ph-bold ph-gift"></i><span>Free forever<small>No ads, no in-app purchases, no account</small></span></div>
+          <div class="fact"><i class="ph-bold ph-wifi-slash"></i><span>Never goes online<small>Your dog's stats stay on your Mac</small></span></div>
+          <div class="fact"><i class="ph-bold ph-feather"></i><span>Under 2 MB<small>Barely touches your CPU</small></span></div>
+          <div class="fact"><i class="ph-bold ph-cpu"></i><span>Apple silicon and Intel<small>macOS 12 Monterey or later</small></span></div>
+        </div>`, { left: "72px", top: "64px" });
+    } },
+  };
+
+  const id = new URLSearchParams(location.search).get("card") || "og";
+  const def = CARDS[id];
+  card.style.width = def.w + "px";
+  card.style.height = def.h + "px";
+  def.build(card);
+  window.CARD_IDS = Object.keys(CARDS);
+})();
+</script>
+</body>
+</html>

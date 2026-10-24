@@ -79,6 +79,10 @@ codesign --force --sign - "$OUT" >/dev/null 2>&1 || true
 mkdir -p website/downloads website/assets
 cp "$OUT" website/downloads/DummyPet.dmg
 cp build/AppIcon.iconset/icon_256x256@2x.png website/assets/icon.png
+for spec in "32 favicon-32" "180 apple-touch-icon" "192 icon-192"; do
+    set -- $spec
+    sips -z "$1" "$1" build/AppIcon.iconset/icon_512x512@2x.png --out "website/assets/$2.png" >/dev/null
+done
 # Keep the size shown on the download page in sync with the real file.
 SIZE_LABEL=$(awk -v b="$(stat -f%z "$OUT")" 'BEGIN { printf "%.1f MB", b / 1000000 }')
 sed -i '' -E "s#<span data-size>[^<]*</span>#<span data-size>$SIZE_LABEL</span>#" website/index.html

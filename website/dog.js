@@ -398,6 +398,7 @@
   class Stage {
     constructor(canvas, opts = {}) {
       this.canvas = canvas;
+      this.opts = opts;
       this.ctx = canvas.getContext("2d");
       this.mode = opts.mode || "hero";
       this.coat = opts.coat || 0;
@@ -425,7 +426,7 @@
       this.w = Math.max(10, r.width); this.h = Math.max(10, r.height); this.dpr = dpr;
       this.canvas.width = Math.round(this.w * dpr); this.canvas.height = Math.round(this.h * dpr);
       const base = this.mode === "portrait" ? this.h / 118 : Math.min(this.w / 360, this.h / 150);
-      this.s = clamp(base, 0.7, 2.3) * this.k;
+      this.s = this.opts.s || clamp(base, 0.7, 2.3) * this.k;
       this.gy = this.groundFn(this.w, this.h);
       if (this.dog && this.mode !== "walk") this.dog.x = clamp(this.dog.x || this.w / 2, this.minX, this.maxX);
       if (this.flowers.length === 0 || this.mode === "walk") this.makeFlowers();
@@ -441,6 +442,15 @@
       else if (this.mode === "bath") this.set("bath", 5);
       else if (this.mode === "dig") this.set("dig", 2.6);
       else if (this.mode === "eat") { d.x = this.w * 0.38; this.bowl = { x: d.x + 43 * this.s, food: 1 }; d.pose = Object.assign({}, POSE.eat); this.set("eat"); }
+      else if (this.mode === "still") {
+        // A frozen pose for press images and social cards.
+        const o = this.opts;
+        d.x = this.w * (o.x ?? 0.5); d.y = o.y || 0;
+        d.facing = d.facingSmooth = o.facing || 1;
+        d.foam = o.foam || 0; d.roll = o.roll || 0; d.xEyes = !!o.xEyes;
+        this.set("still", 1e9);
+        d.pose = Object.assign({}, this.targetPose());
+      }
       else if (this.mode === "portrait") { d.x = this.w / 2 - 4 * this.s; this.set("sit", 1e9); }
       else if (this.mode === "tricks") { d.x = this.w / 2; this.set("sit", 1e9); }
       else if (this.mode === "morning") { d.pose = Object.assign({}, POSE.sleep); this.set("sleep", 1.4); }
@@ -798,6 +808,7 @@
         }
         case "carry": p = P({ tailWag: 0.7 }); break;
         case "trick": p = this.trickPose(); break;
+        case "still": p = P(this.opts.override || {}, POSE[this.opts.pose || "sit"]); break;
         default: p = STAND;
       }
       p = Object.assign({}, p);
@@ -836,7 +847,7 @@
       this.time += dt;
       d.actTime += dt;
       d.moved = false;
-      if (d.y > 0 || d.vy > 0) {
+      if (this.mode !== "still" && (d.y > 0 || d.vy > 0)) {
         d.vy -= 1700 * dt; d.y += d.vy * dt; d.x += d.vx * dt;
         if (d.x < this.minX) { d.x = this.minX; d.vx = Math.abs(d.vx) * 0.5; }
         if (d.x > this.maxX) { d.x = this.maxX; d.vx = -Math.abs(d.vx) * 0.5; }
@@ -858,7 +869,7 @@
 
       // ball physics
       for (const b of this.items) {
-        if (b === this.held) continue;
+        if (b === this.held || this.mode === "still") continue;
         if (b.carried) { b.x = this.mouth[0]; b.y = this.mouth[1]; continue; }
         b.vy -= 1500 * dt; b.x += b.vx * dt; b.y += b.vy * dt;
         const floor = this.gy + b.r;
@@ -901,7 +912,7 @@
         ctx.fillStyle = "rgba(96,176,84,0.9)"; ctx.fillRect(0, 0, this.w, this.gy);
         ctx.fillStyle = "rgba(76,150,66,0.9)"; ctx.fillRect(0, this.gy - 2.5, this.w, 2.5);
       }
-      if (this.mode === "walk" || this.mode === "hero") for (const f of this.flowers) drawFlower(ctx, f, this.gy, s * 0.9, this.time);
+      if (this.mode === "walk" || this.mode === "hero" || (this.mode === "still" && this.opts.flowers)) for (const f of this.flowers) drawFlower(ctx, f, this.gy, s * 0.9, this.time);
       if (this.bowl) drawBowl(ctx, this.bowl, this.gy, s);
       for (const b of this.items) if (!b.carried && b !== this.held) drawBall(ctx, b.x, b.y, b.r, b.spin);
 
@@ -923,7 +934,7 @@
       const ctx = this.ctx;
       ctx.save();
       ctx.setTransform(this.dpr, 0, 0, this.dpr, 0, 0); // y-down for text
-      const size = clamp(13 * Math.min(1.15, this.s * 0.75), 12, 15);
+      const size = clamp(13 * Math.min(1.15, this.s * 0.75), 12, 15) * (this.opts.bubbleScale || 1);
       ctx.font = `600 ${size}px "Geist", system-ui, -apple-system, sans-serif`;
       const tw = ctx.measureText(b.text).width, w = tw + 22, h = size + 14;
       const ax = this.head[0], ay = this.h - Math.max(this.head[1] + 26 * this.s, this.gy + 70 * this.s);
@@ -958,5 +969,5 @@
     setCoat(i) { this.coat = i; this.dog.happyTimer = 1.4; this.hearts(2); }
   }
 
-  window.DummyPet = { Stage, COATS };
+  window.DummyPet = { Stage, COATS, POSE };
 })();
