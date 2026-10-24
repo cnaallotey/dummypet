@@ -402,7 +402,7 @@
       this.mode = opts.mode || "hero";
       this.coat = opts.coat || 0;
       this.k = opts.scale || 1;
-      this.ground = opts.ground ?? 26;
+      this.groundFn = typeof opts.ground === "function" ? opts.ground : () => opts.ground ?? 26;
       this.grass = opts.grass !== false;
       this.dog = new Dog();
       this.items = []; this.parts = []; this.flowers = []; this.bowl = null; this.bubble = null;
@@ -426,7 +426,7 @@
       this.canvas.width = Math.round(this.w * dpr); this.canvas.height = Math.round(this.h * dpr);
       const base = this.mode === "portrait" ? this.h / 118 : Math.min(this.w / 360, this.h / 150);
       this.s = clamp(base, 0.7, 2.3) * this.k;
-      this.gy = this.ground;
+      this.gy = this.groundFn(this.w, this.h);
       if (this.dog && this.mode !== "walk") this.dog.x = clamp(this.dog.x || this.w / 2, this.minX, this.maxX);
       if (this.flowers.length === 0 || this.mode === "walk") this.makeFlowers();
     }
@@ -443,6 +443,8 @@
       else if (this.mode === "eat") { d.x = this.w * 0.38; this.bowl = { x: d.x + 43 * this.s, food: 1 }; d.pose = Object.assign({}, POSE.eat); this.set("eat"); }
       else if (this.mode === "portrait") { d.x = this.w / 2 - 4 * this.s; this.set("sit", 1e9); }
       else if (this.mode === "tricks") { d.x = this.w / 2; this.set("sit", 1e9); }
+      else if (this.mode === "morning") { d.pose = Object.assign({}, POSE.sleep); this.set("sleep", 1.4); }
+      else if (this.mode === "fetchloop") { d.x = this.w * 0.3; this.owner = this.w * 0.3; this.set("sit", 0.8); }
       else this.set("sit", 2.5);
     }
 
@@ -638,7 +640,7 @@
       const d = this.dog, s = this.s;
       switch (d.act) {
         case "idle": case "sit": case "lie": case "playBow":
-          if (this.mode === "tricks") break;
+          if (this.mode === "tricks" || this.mode === "fetchloop") break;
           if (d.actTime > d.actDuration) this.decide();
           break;
         case "wander":
@@ -753,6 +755,22 @@
             this.set("eat");
           }
           break;
+        case "morning":
+          if (d.act === "sleep" && t > d.actDuration) this.set("stretch", 1.9);
+          else if (d.act === "stretch" && t > d.actDuration) {
+            this.set("sit", 3.6); d.happyTimer = 1.5;
+            this.say(pick(["Good morning! ☀️", "Is it breakfast yet?", "Morning! 🐾"]), 2.2);
+          } else if (d.act === "sit" && t > d.actDuration) this.set("stretch", 1.9);
+          break;
+        case "fetchloop":
+          if ((d.act === "sit" || d.act === "idle") && t > d.actDuration && !this.items.some((b) => b.thrown || b.carried)) {
+            const r = 9 * s;
+            this.items = [{ x: this.w - r, y: this.h * rnd(0.5, 0.7), vx: -rnd(260, 420), vy: rnd(120, 300), r, spin: 0, carried: false, thrown: true }];
+            this.owner = this.w * 0.28;
+            this.set("fetch");
+          }
+          this.heroBrain(dt);
+          break;
         case "portrait":
           break;
       }
@@ -767,6 +785,7 @@
         case "sleep": p = POSE.sleep; break;
         case "sniff": p = P({ headY: POSE.sniff.headY + Math.sin(t * 9) * 2 }, POSE.sniff); break;
         case "playBow": p = POSE.playBow; break;
+        case "stretch": p = P({ mouth: d.actTime > 0.5 ? 0.9 : 0, eyeOpen: 0.3, tailWag: 0.2 }, POSE.playBow); break;
         case "bellyUp": p = POSE.bellyUp; break;
         case "eat": p = P({ mouth: 0.35 + 0.35 * Math.sin(t * 14) }, POSE.eat); break;
         case "dig": p = POSE.dig; break;
@@ -921,6 +940,19 @@
       ctx.shadowColor = "transparent";
       ctx.fillStyle = "#1c2030"; ctx.textBaseline = "middle"; ctx.fillText(b.text, x + 11, y + h / 2 + 0.5);
       ctx.restore();
+    }
+
+    /** Switch behaviour live (story chapters). */
+    setMode(mode) {
+      if (mode === this.mode) return;
+      const d = this.dog;
+      this.mode = mode;
+      this.items = []; this.bowl = null; this.bubble = null; this.parts = [];
+      d.carrying = null; d.y = 0; d.vy = 0; d.vx = 0; d.foam = 0; d.wobble = 0; d.roll = 0; d.rollLocked = false; d.xEyes = false;
+      this.cycle = 0;
+      this.init();
+      if (mode === "walk") this.makeFlowers();
+      if (reduceMotion.matches) { d.pose = Object.assign({}, this.targetPose()); d.speed = 0; this.drawnStatic = false; }
     }
 
     setCoat(i) { this.coat = i; this.dog.happyTimer = 1.4; this.hearts(2); }

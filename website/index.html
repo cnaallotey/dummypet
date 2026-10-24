@@ -26,7 +26,7 @@
         <span>DummyPet</span>
       </a>
       <nav class="nav-links" aria-label="Sections">
-        <a href="#features">Features</a>
+        <a href="#story">A day</a>
         <a href="#tricks">Tricks</a>
         <a href="#breeds">Breeds</a>
         <a href="#install">Install</a>
@@ -39,66 +39,65 @@
   </header>
 
   <main id="top">
-    <!-- Hero -->
-    <section class="hero wrap">
-      <div class="hero-copy">
-        <h1 class="reveal">A very good dog that lives on your Mac.</h1>
-        <p class="lede reveal" style="--d:1">It naps on your Dock, begs for treats, chases the ball you throw, and gets bored if you ignore it.</p>
-        <div class="hero-ctas reveal" style="--d:2">
-          <a class="btn btn-primary" href="downloads/DummyPet.dmg" download data-download>
-            <i class="ph-bold ph-apple-logo" aria-hidden="true"></i> Download for Mac
-          </a>
-          <a class="btn btn-ghost" href="#tricks">See the tricks <i class="ph-bold ph-arrow-down" aria-hidden="true"></i></a>
+    <!-- Hero: WebGL sky + the dog roaming the whole ground line -->
+    <section class="hero" id="hero">
+      <canvas class="hero-sky" id="hero-sky" aria-hidden="true"></canvas>
+      <canvas class="hero-dog" id="hero-canvas" aria-label="Interactive dog. Click the sky to toss a ball, rub the dog to pet it."></canvas>
+      <div class="wrap hero-inner">
+        <div class="hero-copy">
+          <h1 class="reveal">A very good dog that lives on your Mac.</h1>
+          <p class="lede reveal" style="--d:1">It naps on your Dock, begs for treats, chases the ball you throw, and gets bored if you ignore it.</p>
+          <div class="hero-ctas reveal" style="--d:2">
+            <a class="btn btn-primary" href="downloads/DummyPet.dmg" download data-download>
+              <i class="ph-bold ph-apple-logo" aria-hidden="true"></i> Download for Mac
+            </a>
+            <a class="btn btn-ghost" href="#story">Spend a day with it <i class="ph-bold ph-arrow-down" aria-hidden="true"></i></a>
+          </div>
         </div>
       </div>
-      <figure class="hero-stage reveal" style="--d:1">
-        <div class="scene scene-sky">
-          <canvas id="hero-canvas" aria-label="Interactive dog. Click to toss a ball, rub the dog to pet it."></canvas>
-        </div>
-        <figcaption><i class="ph-bold ph-hand-pointing" aria-hidden="true"></i> Try it: click to toss the ball, flick to throw it far, rub the dog to pet it.</figcaption>
-      </figure>
     </section>
 
-    <!-- Features bento -->
-    <section id="features" class="section wrap">
-      <h2 class="reveal">It does dog things.</h2>
-      <p class="section-lede reveal">Your dog has its own little life on your screen. It wanders, sniffs, digs, and asks for attention when it needs some.</p>
-      <div class="bento">
-        <article class="tile tile-walk reveal">
-          <div class="scene scene-sky"><canvas data-stage="walk" aria-hidden="true"></canvas></div>
-          <div class="tile-copy">
-            <h3>Walks on a leash</h3>
-            <p>Clip on the leash and your cursor becomes the other end. Flowers pop up, it stops to sniff, and every step is counted.</p>
-          </div>
+    <!-- A day with your dog: sticky stage, chapters scroll past, the sky follows the clock -->
+    <section id="story" class="story wrap">
+      <div class="story-chapters">
+        <h2 class="story-title reveal">A day with your dog.</h2>
+        <article class="chapter" data-mode="morning" data-day="0">
+          <p class="clock">7:00 am</p>
+          <h3>Rise and stretch.</h3>
+          <p>Your dog wakes up when you do, does a big stretch, and says good morning.</p>
         </article>
-        <article class="tile tile-nap reveal" style="--d:1">
-          <div class="scene scene-night"><canvas data-stage="sleep" data-grass="false" aria-hidden="true"></canvas></div>
-          <div class="tile-copy">
-            <h3>Naps when tired</h3>
-            <p>Low on energy? It curls up and snores until it's ready to play again.</p>
-          </div>
+        <article class="chapter" data-mode="eat" data-day="0.14">
+          <p class="clock">8:15 am</p>
+          <h3>Breakfast is serious business.</h3>
+          <p>Fill the bowl from the menu bar and listen to the crunch. It might need a potty break later. You'll scoop.</p>
         </article>
-        <article class="tile tile-bath reveal">
-          <div class="scene scene-water"><canvas data-stage="bath" aria-hidden="true"></canvas></div>
-          <div class="tile-copy">
-            <h3>Bath time</h3>
-            <p>Rub to scrub. Then stand back while it shakes off.</p>
-          </div>
+        <article class="chapter" data-mode="fetchloop" data-day="0.36">
+          <p class="clock">11:30 am</p>
+          <h3>Fetch, obviously.</h3>
+          <p>The ball sticks to your cursor. Flick and click to throw it. Your dog brings it right back, every single time.</p>
         </article>
-        <article class="tile tile-dig reveal" style="--d:1">
-          <div class="scene scene-sand"><canvas data-stage="dig" aria-hidden="true"></canvas></div>
-          <div class="tile-copy">
-            <h3>Digs up treasure</h3>
-            <p>Bones, coins, and every sock you've lost this year.</p>
-          </div>
+        <article class="chapter" data-mode="walk" data-day="0.56">
+          <p class="clock">3:00 pm</p>
+          <h3>Walk time.</h3>
+          <p>Clip on the leash and your cursor becomes the other end. Flowers pop up, it stops to sniff, and every step is counted.</p>
         </article>
-        <article class="tile tile-eat reveal" style="--d:2">
-          <div class="scene scene-kitchen"><canvas data-stage="eat" aria-hidden="true"></canvas></div>
-          <div class="tile-copy">
-            <h3>Dinner, crunch included</h3>
-            <p>Fill the bowl and it comes running. Scoop up after it, too.</p>
-          </div>
+        <article class="chapter" data-mode="bath" data-day="0.76">
+          <p class="clock">6:30 pm</p>
+          <h3>Bath, then the big shake.</h3>
+          <p>Rub to scrub the suds in faster. Then stand well back.</p>
         </article>
+        <article class="chapter" data-mode="sleep" data-day="1">
+          <p class="clock">10:00 pm</p>
+          <h3>Lights out.</h3>
+          <p>When its energy runs low it curls up and snores. Wake it with a click if you're feeling mean.</p>
+        </article>
+      </div>
+      <div class="story-stage">
+        <div class="story-frame">
+          <canvas class="story-sky" id="story-sky" aria-hidden="true"></canvas>
+          <canvas class="story-dog" id="story-dog" aria-label="Your dog going through its day"></canvas>
+          <ol class="story-dots" aria-hidden="true"><li></li><li></li><li></li><li></li><li></li><li></li></ol>
+        </div>
       </div>
     </section>
 
@@ -204,12 +203,16 @@
       </div>
     </section>
 
-    <!-- Closing -->
+    <!-- Closing: night sky with shooting stars -->
     <section class="closing wrap reveal">
-      <h2>Give your Mac a dog.</h2>
-      <a class="btn btn-primary btn-lg" href="downloads/DummyPet.dmg" download data-download>
-        <i class="ph-bold ph-apple-logo" aria-hidden="true"></i> Download for Mac
-      </a>
+      <canvas class="closing-sky" id="closing-sky" aria-hidden="true"></canvas>
+      <canvas class="closing-dog" id="closing-dog" aria-hidden="true"></canvas>
+      <div class="closing-copy">
+        <h2>Give your Mac a dog.</h2>
+        <a class="btn btn-primary btn-lg" href="downloads/DummyPet.dmg" download data-download>
+          <i class="ph-bold ph-apple-logo" aria-hidden="true"></i> Download for Mac
+        </a>
+      </div>
     </section>
   </main>
 
@@ -218,6 +221,9 @@
     <span>Made for Macs and the people who wish they had a dog at their desk.</span>
   </footer>
 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script src="sky.js"></script>
   <script src="dog.js"></script>
   <script src="main.js"></script>
 </body>
