@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>DummyPet: a dog for your Mac</title>
+  <meta name="description" content="DummyPet puts a playful dog on your Mac desktop. Feed it, walk it, play fetch, teach it tricks. Free for macOS 12 and later.">
+  <meta name="theme-color" content="#f3f5f9" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#0f1116" media="(prefers-color-scheme: dark)">
+  <meta property="og:title" content="DummyPet: a dog for your Mac">
+  <meta property="og:description" content="A playful dog that lives on your desktop. Free for macOS.">
+  <meta property="og:image" content="assets/icon.png">
+  <link rel="icon" type="image/png" href="assets/icon.png">
+  <link rel="apple-touch-icon" href="assets/icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Geist:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="nav">
+    <div class="wrap nav-inner">
+      <a class="brand" href="#top" aria-label="DummyPet home">
+        <img src="assets/icon.png" alt="" width="30" height="30">
+        <span>DummyPet</span>
+      </a>
+      <nav class="nav-links" aria-label="Sections">
+        <a href="#features">Features</a>
+        <a href="#tricks">Tricks</a>
+        <a href="#breeds">Breeds</a>
+        <a href="#install">Install</a>
+        <a href="#faq">FAQ</a>
+      </nav>
+      <a class="btn btn-primary btn-sm" href="downloads/DummyPet.dmg" download data-download>
+        <i class="ph-bold ph-apple-logo" aria-hidden="true"></i> Download for Mac
+      </a>
+    </div>
+  </header>
+
+  <main id="top">
+    <!-- Hero -->
+    <section class="hero wrap">
+      <div class="hero-copy">
+        <h1 class="reveal">A very good dog that lives on your Mac.</h1>
+        <p class="lede reveal" style="--d:1">It naps on your Dock, begs for treats, chases the ball you throw, and gets bored if you ignore it.</p>
+        <div class="hero-ctas reveal" style="--d:2">
+          <a class="btn btn-primary" href="downloads/DummyPet.dmg" download data-download>
+            <i class="ph-bold ph-apple-logo" aria-hidden="true"></i> Download for Mac
+          </a>
+          <a class="btn btn-ghost" href="#tricks">See the tricks <i class="ph-bold ph-arrow-down" aria-hidden="true"></i></a>
+        </div>
+      </div>
+      <figure class="hero-stage reveal" style="--d:1">
+        <div class="scene scene-sky">
+          <canvas id="hero-canvas" aria-label="Interactive dog. Click to toss a ball, rub the dog to pet it."></canvas>
+        </div>
+        <figcaption><i class="ph-bold ph-hand-pointing" aria-hidden="true"></i> Try it: click to toss the ball, flick to throw it far, rub the dog to pet it.</figcaption>
+      </figure>
+    </section>
+
+    <!-- Features bento -->
+    <section id="features" class="section wrap">
+      <h2 class="reveal">It does dog things.</h2>
+      <p class="section-lede reveal">Your dog has its own little life on your screen. It wanders, sniffs, digs, and asks for attention when it needs some.</p>
+      <div class="bento">
+        <article class="tile tile-walk reveal">
+          <div class="scene scene-sky"><canvas data-stage="walk" aria-hidden="true"></canvas></div>
+          <div class="tile-copy">
+            <h3>Walks on a leash</h3>
+            <p>Clip on the leash and your cursor becomes the other end. Flowers pop up, it stops to sniff, and every step is counted.</p>
+          </div>
+        </article>
+        <article class="tile tile-nap reveal" style="--d:1">
+          <div class="scene scene-night"><canvas data-stage="sleep" data-grass="false" aria-hidden="true"></canvas></div>
+          <div class="tile-copy">
+            <h3>Naps when tired</h3>
+            <p>Low on energy? It curls up and snores until it's ready to play again.</p>
+          </div>
+        </article>
+        <article class="tile tile-bath reveal">
+          <div class="scene scene-water"><canvas data-stage="bath" aria-hidden="true"></canvas></div>
+          <div class="tile-copy">
+            <h3>Bath time</h3>
+            <p>Rub to scrub. Then stand back while it shakes off.</p>
+          </div>
+        </article>
+        <article class="tile tile-dig reveal" style="--d:1">
+          <div class="scene scene-sand"><canvas data-stage="dig" aria-hidden="true"></canvas></div>
+          <div class="tile-copy">
+            <h3>Digs up treasure</h3>
+            <p>Bones, coins, and every sock you've lost this year.</p>
+          </div>
+        </article>
+        <article class="tile tile-eat reveal" style="--d:2">
+          <div class="scene scene-kitchen"><canvas data-stage="eat" aria-hidden="true"></canvas></div>
+          <div class="tile-copy">
+            <h3>Dinner, crunch included</h3>
+            <p>Fill the bowl and it comes running. Scoop up after it, too.</p>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- Tricks -->
+    <section id="tricks" class="section wrap tricks">
+      <div class="tricks-stage reveal">
+        <div class="scene scene-sky"><canvas id="tricks-canvas" aria-label="Dog performing tricks"></canvas></div>
+      </div>
+      <div class="tricks-copy">
+        <h2 class="reveal">Eight tricks to unlock.</h2>
+        <p class="section-lede reveal">Every pat, walk, and game of fetch builds your bond. New tricks unlock as it grows. Here, they're all unlocked, so go ahead.</p>
+        <div class="trick-grid reveal" role="group" aria-label="Tricks">
+          <button class="trick" data-trick="sit"><span aria-hidden="true">🪑</span>Sit<small>Bond 1</small></button>
+          <button class="trick" data-trick="speak"><span aria-hidden="true">🗣️</span>Speak<small>Bond 1</small></button>
+          <button class="trick" data-trick="beg"><span aria-hidden="true">🥺</span>Beg<small>Bond 2</small></button>
+          <button class="trick" data-trick="spin"><span aria-hidden="true">🌀</span>Spin<small>Bond 2</small></button>
+          <button class="trick" data-trick="highFive"><span aria-hidden="true">✋</span>High five<small>Bond 3</small></button>
+          <button class="trick" data-trick="rollOver"><span aria-hidden="true">🔄</span>Roll over<small>Bond 3</small></button>
+          <button class="trick" data-trick="playDead"><span aria-hidden="true">💫</span>Play dead<small>Bond 4</small></button>
+          <button class="trick" data-trick="backflip"><span aria-hidden="true">🤸</span>Backflip<small>Bond 6</small></button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Breeds -->
+    <section id="breeds" class="section wrap">
+      <h2 class="reveal">Pick your pup.</h2>
+      <p class="section-lede reveal">Seven breeds, three sizes, and any name you like. Tap one to see it on this page.</p>
+      <div class="breeds reveal" role="radiogroup" aria-label="Breeds" id="breed-list"></div>
+    </section>
+
+    <!-- Install -->
+    <section id="install" class="section wrap install">
+      <div class="download-card reveal">
+        <img src="assets/icon.png" alt="DummyPet app icon" width="112" height="112">
+        <p class="eyebrow">Free download</p>
+        <h2>DummyPet 1.0</h2>
+        <ul class="meta">
+          <li><i class="ph-bold ph-desktop" aria-hidden="true"></i> macOS 12 Monterey or later</li>
+          <li><i class="ph-bold ph-cpu" aria-hidden="true"></i> Apple silicon and Intel</li>
+          <li><i class="ph-bold ph-file-arrow-down" aria-hidden="true"></i><span data-size>1.7 MB</span> disk image</li>
+          <li><i class="ph-bold ph-wifi-slash" aria-hidden="true"></i> No account, no internet, no tracking</li>
+        </ul>
+        <a class="btn btn-primary btn-lg" href="downloads/DummyPet.dmg" download data-download>
+          <i class="ph-bold ph-apple-logo" aria-hidden="true"></i> Download for Mac
+        </a>
+      </div>
+      <div class="install-steps">
+        <h2 class="reveal">Up and running in a minute.</h2>
+        <ol class="steps">
+          <li class="reveal">
+            <i class="ph-bold ph-hard-drives" aria-hidden="true"></i>
+            <div><h3>Open the disk image</h3><p>Double-click <code>DummyPet.dmg</code> in your Downloads folder.</p></div>
+          </li>
+          <li class="reveal" style="--d:1">
+            <i class="ph-bold ph-arrow-fat-line-right" aria-hidden="true"></i>
+            <div><h3>Drag it to Applications</h3><p>Drop the DummyPet icon onto the Applications folder in the window.</p></div>
+          </li>
+          <li class="reveal" style="--d:2">
+            <i class="ph-bold ph-paw-print" aria-hidden="true"></i>
+            <div><h3>Say hello</h3><p>Open DummyPet. Your dog runs in from the edge of the screen, and a dog icon appears in the menu bar.</p></div>
+          </li>
+        </ol>
+        <div class="note reveal">
+          <h3><i class="ph-bold ph-shield-warning" aria-hidden="true"></i> Seeing a security warning?</h3>
+          <p>DummyPet isn't notarized by Apple yet, so macOS asks before the first launch. Right-click the app and choose <strong>Open</strong>. On macOS 15 or later, open <strong>System Settings &gt; Privacy &amp; Security</strong> and click <strong>Open Anyway</strong>. Or run this in Terminal:</p>
+          <div class="cmd">
+            <code id="cmd">xattr -dr com.apple.quarantine /Applications/DummyPet.app</code>
+            <button class="copy" data-copy="#cmd" aria-label="Copy command"><i class="ph-bold ph-copy" aria-hidden="true"></i><span>Copy</span></button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section id="faq" class="section wrap faq">
+      <h2 class="reveal">Questions</h2>
+      <div class="faq-list reveal">
+        <details>
+          <summary>Is it really free?</summary>
+          <p>Yes. No ads, no in-app purchases, no account. Just a dog.</p>
+        </details>
+        <details>
+          <summary>Will it slow down my Mac?</summary>
+          <p>It's a small native app (under 2 MB) that only redraws the area around the dog, so it barely touches your CPU. Clicks pass straight through to the windows behind it unless you're touching the dog or its toys.</p>
+        </details>
+        <details>
+          <summary>Does it collect any data?</summary>
+          <p>No. DummyPet never connects to the internet. Your dog's name and stats are saved on your Mac and nowhere else.</p>
+        </details>
+        <details>
+          <summary>What happens when I quit the app?</summary>
+          <p>Your dog waits for you. Its stats drift down slowly while you're away, but gently: it can't get sick or run away. Expect an enthusiastic welcome back.</p>
+        </details>
+        <details>
+          <summary>Can I hide it for a meeting?</summary>
+          <p>Click the dog icon in the menu bar and choose Hide. Choose Show when the meeting's over.</p>
+        </details>
+        <details>
+          <summary>How do I uninstall it?</summary>
+          <p>Quit DummyPet from its menu, then drag it from Applications to the Trash.</p>
+        </details>
+      </div>
+    </section>
+
+    <!-- Closing -->
+    <section class="closing wrap reveal">
+      <h2>Give your Mac a dog.</h2>
+      <a class="btn btn-primary btn-lg" href="downloads/DummyPet.dmg" download data-download>
+        <i class="ph-bold ph-apple-logo" aria-hidden="true"></i> Download for Mac
+      </a>
+    </section>
+  </main>
+
+  <footer class="footer wrap">
+    <span>© <span id="year">2026</span> DummyPet</span>
+    <span>Made for Macs and the people who wish they had a dog at their desk.</span>
+  </footer>
+
+  <script src="dog.js"></script>
+  <script src="main.js"></script>
+</body>
+</html>
